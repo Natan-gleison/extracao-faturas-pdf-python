@@ -9,7 +9,7 @@ Automação para extração, tratamento e consolidação de dados de faturas em 
 
 -- Case de Negócio --
 
-Este projeto simula um cenário real de operações logísticas onde analistas precisam consolidar informações de dezenas ou centenas de faturas mensalmente.
+Este projeto simula um cenário real admnistrativo onde analistas precisam consolidar informações de dezenas ou centenas de faturas mensalmente.
 
 A automação reduz o tempo gasto com atividades operacionais, aumenta a qualidade dos dados e disponibiliza informações estruturadas para análises estratégicas.
 
@@ -17,7 +17,7 @@ A automação reduz o tempo gasto com atividades operacionais, aumenta a qualida
 
 -- Sobre o Projeto --
 
-Em muitas operações logísticas e financeiras, informações importantes ficam armazenadas em arquivos PDF, exigindo digitação manual para consolidação e análise.
+Em muitas operações financeiras, informações importantes ficam armazenadas em arquivos PDF, exigindo digitação manual para consolidação e análise.
 
 Este projeto automatiza esse processo através da leitura de múltiplas faturas PDF, extração dos dados relevantes, tratamento das informações e geração de uma base estruturada em Excel para posterior utilização em ferramentas de análise como Power BI.
 
