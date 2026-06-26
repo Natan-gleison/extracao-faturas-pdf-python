@@ -1,1 +1,1 @@
-"""Pacote principal do projeto de extração de faturas PDF."""
+"""Pacote principal de extração e processamento de faturas em PDF."""

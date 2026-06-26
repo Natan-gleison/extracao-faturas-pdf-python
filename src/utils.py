@@ -1,24 +1,37 @@
-from pathlib import Path
+"""
+utils.py
+
+Funcoes auxiliares de uso geral: configuracao de logging e geracao de
+timestamps usados na nomenclatura de pastas e arquivos de saida.
+"""
+
+import os
 import logging
+from datetime import datetime
 
 
-def setup_logger() -> None:
+def gerar_timestamp() -> str:
     """
-    Configura o logger da aplicação.
+    Retorna o timestamp atual no formato 'dd-mm-aaaa HH-MM'.
     """
+    return datetime.now().strftime("%d-%m-%Y %H-%M")
 
-    Path("logs").mkdir(exist_ok=True)
+
+def configurar_logging(caminho_log: str) -> None:
+    """
+    Configura o logging da aplicacao para gravar em arquivo e exibir no console.
+
+    Args:
+        caminho_log: Caminho completo do arquivo de log (ex: logs/execucao.log).
+    """
+    os.makedirs(os.path.dirname(caminho_log), exist_ok=True)
+
     logging.basicConfig(
-        filename="logs/extracao.log",
         level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s"
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        handlers=[
+            logging.FileHandler(caminho_log, encoding="utf-8"),
+            logging.StreamHandler(),
+        ],
+        force=True,
     )
-
-
-def listar_pdfs(caminho: str) -> list[Path]:
-    """
-    Lista todos os PDFs na pasta de entrada.
-    """
-
-    Path(caminho).mkdir(parents=True, exist_ok=True)
-    return list(Path(caminho).glob("*.pdf"))

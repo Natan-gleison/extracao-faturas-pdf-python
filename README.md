@@ -1,209 +1,102 @@
-# extracao-faturas-pdf-python
+# Extração de Faturas PDF (Python)
 
+Robô em Python para extração automatizada de dados de faturas em PDF (faturas de transporte), com identificação de filial/centro de custo via CNPJ, classificação de tipo de despesa, e exportação consolidada para Excel.
 
--- Extração de Faturas PDF com Python --
+O projeto é totalmente local: não depende de IA externa, API paga ou serviço em nuvem. Toda a extração é feita com `PyMuPDF` (leitura do PDF) e expressões regulares (`re`).
 
-Automação para extração, tratamento e consolidação de dados de faturas em PDF utilizando Python. O projeto foi desenvolvido com foco em ganho de produtividade, redução de atividades manuais e aumento da confiabilidade dos dados para análises e tomada de decisão.
+## ✨ Funcionalidades
 
+- Leitura em lote de todos os PDFs de uma pasta de entrada.
+- Identificação automática de:
+  - Filial / unidade pagadora (por código ou por nome).
+  - Tipo de operação (BULK, PGP/Suprimento, Outro).
+  - Tipo de despesa (Frete Fixo, Frete Variável, Frota Extra, etc.).
+  - CNPJs (fornecedor e cliente), datas de emissão/vencimento, ICMS.
+  - Centro de custo e código da filial a partir do CNPJ do cliente.
+- Suporte a múltiplas faturas dentro do mesmo PDF.
+- Exportação para uma planilha `.xlsx` única, com os valores já convertidos para tipos numéricos/data.
+- Cópia dos PDFs processados para a pasta de saída (sufixo ` - IC`).
+- Log de execução em arquivo (`logs/execucao.log`), com tratamento de erro por PDF (um arquivo com problema não interrompe o processamento dos demais).
 
+## 📂 Estrutura do projeto
 
--- Case de Negócio --
-
-Este projeto simula um cenário real admnistrativo onde analistas precisam consolidar informações de dezenas ou centenas de faturas mensalmente.
-
-A automação reduz o tempo gasto com atividades operacionais, aumenta a qualidade dos dados e disponibiliza informações estruturadas para análises estratégicas.
-
-
-
--- Sobre o Projeto --
-
-Em muitas operações financeiras, informações importantes ficam armazenadas em arquivos PDF, exigindo digitação manual para consolidação e análise.
-
-Este projeto automatiza esse processo através da leitura de múltiplas faturas PDF, extração dos dados relevantes, tratamento das informações e geração de uma base estruturada em Excel para posterior utilização em ferramentas de análise como Power BI.
-
-
-
--- Objetivos --
-
-Automatizar a leitura de faturas PDF.
-Extrair informações relevantes de forma estruturada.
-Reduzir erros manuais de digitação.
-Consolidar dados em uma única base.
-Disponibilizar informações para análise e criação de dashboards.
-
-
-
--- Funcionalidades --
-
-. Leitura automática de múltiplos PDFs
-
-. Extração de dados através de Regex
-
-. Tratamento e padronização dos dados
-
-. Consolidação em DataFrame Pandas
-
-. Exportação para Excel
-
-. Registro de logs de execução
-
-. Estrutura modular e escalável
-
-
-
--- Informações Extraídas --
-
-O sistema pode extrair campos como:
-
-. Campo	Descrição
-. Número da Fatura	Identificação da fatura
-. Data de Emissão	Data de emissão do documento
-. Valor do Frete	Valor cobrado pelo transporte
-. ICMS	Valor do imposto
-. Valor da Mercadoria	Valor total da carga
-. Remetente	Empresa remetente
-. Destinatário	Empresa destinatária
-. CNPJ	Documento da empresa
-. Cidade de Origem	Local de embarque
-. Cidade de Destino	Local de entrega
-
-
--- Tecnologias Utilizadas --
-
-Python 3.12+
-Pandas
-PDFPlumber
-Regex (re)
-OpenPyXL
-Logging
-Pathlib
-
--- Estrutura do Projeto --
-
+```
 extracao-faturas-pdf-python/
 │
 ├── data/
-│   ├── input/
-│   │   └── PDFs de entrada
-│   │
-│   └── output/
-│       └── Arquivos gerados
+│   ├── input/              # Coloque aqui os PDFs das faturas a processar
+│   └── output/              # Pasta com os arquivos gerados (PDFs copiados + Excel)
 │
 ├── logs/
-│   └── execucao.log
+│   └── execucao.log         # Log de cada execução
 │
 ├── src/
-│   ├── extractor.py
-│   ├── parser.py
-│   ├── exporter.py
-│   └── utils.py
+│   ├── extractor.py         # Leitura/extração de texto bruto dos PDFs (PyMuPDF)
+│   ├── parser.py             # Regras de negócio: regex, dicionários de filiais/centro
+│   ├── exporter.py           # Geração do DataFrame e exportação para Excel
+│   └── utils.py               # Logging e geração de timestamps
 │
 ├── tests/
+│   └── test_parser.py        # Testes unitários (pytest) das regras de parsing
 │
-├── main.py
+├── main.py                    # Ponto de entrada (orquestra todo o fluxo)
 ├── requirements.txt
-├── README.md
-└── .gitignore
+└── README.md
+```
 
+## 🚀 Como usar
 
--- Instalação --
+1. Clone o repositório e crie um ambiente virtual (recomendado):
 
-Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/extracao-faturas-pdf-python.git
+   cd extracao-faturas-pdf-python
+   python -m venv .venv
+   source .venv/bin/activate      # Windows: .venv\Scripts\activate
+   ```
 
-git clone https://github.com/seu-usuario/extracao-faturas-pdf-python.git
+2. Instale as dependências:
 
-Entre na pasta:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-cd extracao-faturas-pdf-python
+3. Coloque os PDFs das faturas dentro de `data/input/`.
 
-Crie um ambiente virtual:
+4. Execute:
 
-python -m venv venv
+   ```bash
+   python main.py
+   ```
 
-Ative o ambiente:
+5. Os resultados serão gerados em `data/output/Faturas_Salvas <data-hora>/`:
+   - Cópias dos PDFs processados (com sufixo ` - IC`).
+   - Um arquivo Excel `Faturas_Extraidas_<data-hora>.xlsx` com todos os dados consolidados.
 
-Windows
-venv\Scripts\activate
-Linux / Mac
-source venv/bin/activate
+O andamento da execução fica registrado em `logs/execucao.log`.
 
-Instale as dependências:
+## 🧩 Adaptando para o seu cenário
 
-pip install -r requirements.txt
+As regras de negócio (códigos de filial, mapeamento de centro de custo, padrões de regex para valor/número de fatura) estão concentradas em `src/parser.py`. Para adaptar o robô a um layout de fatura diferente, normalmente basta:
 
+- Atualizar os dicionários `FILIAIS` e `CENTRO`.
+- Ajustar os padrões (`re.search`/`re.findall`) das funções `extrair_*` conforme o texto do seu PDF.
 
-▶️ Como Executar
+## ✅ Testes
 
-Coloque os PDFs na pasta:
-data/input/
-Execute:
-python main.py
-O arquivo consolidado será gerado em:
-data/output/
+O projeto usa `pytest` para validar as funções de parsing isoladamente (sem precisar de PDFs reais):
 
+```bash
+pytest
+```
 
-📈 Fluxo do Processo
+## 🛣️ Possíveis melhorias futuras
 
-PDFs
-   │
-   ▼
-Leitura dos Arquivos
-   │
-   ▼
-Extração de Texto
-   │
-   ▼
-Identificação dos Campos
-   │
-   ▼
-Tratamento dos Dados
-   │
-   ▼
-Consolidação
-   │
-   ▼
-Excel Final
+- Suporte a configuração externa (YAML/JSON) para os dicionários de filial/centro, em vez de hardcoded no código.
+- Validação de schema do Excel de saída.
+- Processamento em paralelo para grandes volumes de PDFs.
+- Empacotamento como executável (PyInstaller) para uso sem ambiente Python instalado.
 
+## 📄 Licença
 
--- Possíveis Aplicações
-
-Controle de fretes
-Auditoria de faturas
-Conferência de cobranças
-Consolidação financeira
-Integração com Power BI
-Indicadores logísticos
-
-
-🔮 Próximas Melhorias
-
-Interface gráfica com Streamlit
-Banco de dados SQLite
-Dashboard Power BI integrado
-Processamento automático de e-mails
-API para upload de documentos
-OCR para PDFs escaneados
-Inteligência Artificial para layouts variados
-
--- Exemplo de Saída
-
-Número	Data	Frete
-12345	01/06/2026	R$ 850,00
-12346	02/06/2026	R$ 920,00
-
-
-👨‍💻 Autor
-
-Natan Gleison
-
-Analista de Dados com experiência em:
-
-B.I
-Dashboards
-Automação de Processos
-Power Automate
-Python para Análise de Dados
-
-LinkedIn: (https://www.linkedin.com/in/natan-silva-3a14b6262/)
-
-GitHub: Adicionar seu perfil
+Este projeto está disponível sem uma licença definida. Adicione um arquivo `LICENSE` (ex.: MIT) se quiser deixar explícito o uso permitido por terceiros.
