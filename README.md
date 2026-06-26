@@ -97,6 +97,4 @@ pytest
 - Processamento em paralelo para grandes volumes de PDFs.
 - Empacotamento como executável (PyInstaller) para uso sem ambiente Python instalado.
 
-## 📄 Licença
 
-Este projeto está disponível sem uma licença definida. Adicione um arquivo `LICENSE` (ex.: MIT) se quiser deixar explícito o uso permitido por terceiros.
